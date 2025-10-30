@@ -1,0 +1,4 @@
+services:
+  logger.channel.solana_pay:
+    parent: logger.channel_base
+    arguments: [solana_pay]

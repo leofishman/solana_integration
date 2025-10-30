@@ -1,0 +1,30 @@
+solana_integration.settings:
+  type: config_object
+  label: 'Solana Integration settings'
+  mapping:
+    endpoints:
+      type: sequence
+      label: 'Available RPC endpoints'
+      sequence:
+        type: solana_integration.endpoint
+    default_endpoint:
+      type: string
+      label: 'Default endpoint key'
+    merchant_wallet_address:
+      type: string
+      label: 'Merchant Wallet Address'
+
+solana_integration.endpoint:
+  type: mapping
+  label: 'Endpoint configuration'
+  mapping:
+    name:
+      type: string
+      label: 'Endpoint name'
+    url:
+      type: string
+      label: 'Endpoint URL'
+    enabled:
+      type: boolean
+      label: 'Endpoint enabled status'
+

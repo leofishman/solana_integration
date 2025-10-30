@@ -1,0 +1,8 @@
+name: 'Solana Pay for Commerce'
+type: module
+description: 'Provides a Solana Pay payment gateway for Drupal Commerce.'
+core_version_requirement: ^10 || ^11
+package: 'Commerce - Payment'
+dependencies:
+  - drupal:commerce_payment
+  - drupal:solana_integration

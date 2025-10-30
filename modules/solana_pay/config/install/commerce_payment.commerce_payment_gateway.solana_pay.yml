@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - solana_pay
+id: solana_pay
+label: 'Solana Pay'
+plugin: solana_pay
+configuration:
+  display_label: 'Pay with Solana'
+  mode: live
+conditions: {  }
+conditionOperator: AND
+weight: 0

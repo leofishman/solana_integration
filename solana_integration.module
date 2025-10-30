@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Main module file for the Solana Integration module.
+ */
+
+use Drupal\Core\Render\Markup;
+
+/**
+ * Implements hook_help().
+ */
+function solana_integration_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.solana_integration':
+      $output = [];
+      $output[] = '<p>' . t('The Solana Integration module provides services and APIs to interact with the Solana blockchain from Drupal.') . '</p>';
+      $output[] = '<p>' . t('Visit the configuration page at Configuration -> Web services -> Solana Integration to set the RPC endpoint.') . '</p>';
+      return Markup::create(implode("\n", $output));
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function solana_integration_theme() {
+  return [
+    'solana_pay_qr_code' => [
+      'variables' => ['unique_id' => NULL,'amount' => NULL],
+    ],
+  ];
+}

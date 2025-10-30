@@ -1,0 +1,57 @@
+<div class="solana-pay-instructions-wrapper">
+  <div class="solana-pay-notice">
+    <div class="messages messages--warning">
+      <strong>{{ 'Payment Required'|t }}</strong><br>
+      {{ 'Your order has been placed but payment is still required. Please complete the payment below.'|t }}
+    </div>
+  </div>
+
+  <div class="solana-pay-instructions">
+    <h3>{{ 'Complete Your Solana Payment'|t }}</h3>
+    <p>{{ 'Scan the QR code with your Solana wallet app, or click the button below to open your wallet.'|t }}</p>
+    {% if original_amount and currency %}
+      <p><strong>{{ 'Amount: @amount @currency (≈ @sol SOL)'|t({'@amount': original_amount, '@currency': currency, '@sol': amount|number_format(4)}) }}</strong></p>
+    {% else %}
+      <p><strong>{{ 'Amount: @amount SOL'|t({'@amount': amount|number_format(4)}) }}</strong></p>
+    {% endif %}
+  </div>
+
+  <div id="solana-pay-qr" class="solana-pay-qr"></div>
+
+  {% if merchant_address %}
+    <div class="solana-pay-address">
+      <label>{{ 'Recipient Address:'|t }}</label>
+      <div class="solana-pay-address__wrapper">
+        <code id="merchant-address" class="solana-pay-address__value">{{ merchant_address }}</code>
+        <button type="button" id="copy-address-btn" class="button button--small" title="{{ 'Copy address to clipboard'|t }}">
+          {{ 'Copy'|t }}
+        </button>
+      </div>
+      <div id="copy-feedback" class="solana-pay-address__feedback"></div>
+    </div>
+  {% endif %}
+
+  <div class="solana-pay-wallet-link">
+    <a id="solana-pay-open" href="{{ payment_url }}" class="button button--primary">
+      {{ 'Open in Wallet'|t }}
+    </a>
+  </div>
+
+  <div id="solana-pay-status" class="solana-pay-status solana-pay-status--pending">
+    <div class="solana-pay-status__icon">⏳</div>
+    <div class="solana-pay-status__message">{{ 'Waiting for payment confirmation...'|t }}</div>
+    <div class="solana-pay-status__help">{{ 'This page will automatically update once your payment is confirmed on the Solana blockchain.'|t }}</div>
+  </div>
+
+  <div class="solana-pay-help">
+    <details>
+      <summary>{{ 'Need help?'|t }}</summary>
+      <ul>
+        <li>{{ 'Make sure you have SOL in your wallet'|t }}</li>
+        <li>{{ 'The transaction must be on the correct network (Mainnet/Devnet)'|t }}</li>
+        <li>{{ 'Wait for blockchain confirmation (usually 10-30 seconds)'|t }}</li>
+        <li>{{ 'Do not close this page until payment is confirmed'|t }}</li>
+      </ul>
+    </details>
+  </div>
+</div>

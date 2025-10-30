@@ -1,0 +1,11 @@
+checkout:
+  version: 1.x
+  js:
+    https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js: { type: external, minified: true }
+    js/checkout.js: {}
+  css:
+    theme:
+      css/checkout.css: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings

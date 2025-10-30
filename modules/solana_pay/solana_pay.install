@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Solana Pay module.
+ */
+
+use Drupal\commerce_payment\Entity\PaymentGateway;
+
+/**
+ * Implements hook_install().
+ */
+function solana_pay_install() {
+  try {
+    // Create the Solana Pay payment gateway if it doesn't exist.
+    $gateway_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway');
+    $gateway = $gateway_storage->load('solana_pay');
+    
+    if (!$gateway) {
+      $gateway = $gateway_storage->create([
+        'id' => 'solana_pay',
+        'label' => 'Solana Pay',
+        'plugin' => 'solana_pay',
+        'configuration' => [
+          'display_label' => 'Pay with Solana',
+          'mode' => 'live',
+        ],
+        'status' => TRUE,
+        'weight' => 0,
+      ]);
+      $gateway->save();
+      
+      \Drupal::logger('solana_pay')->notice('Solana Pay payment gateway created with ID: @id', ['@id' => $gateway->id()]);
+      \Drupal::messenger()->addStatus(t('Solana Pay payment gateway has been created. Remember to assign it to your store at <a href="/admin/commerce/config/stores">Store settings</a>.'));
+    }
+    else {
+      \Drupal::logger('solana_pay')->notice('Solana Pay payment gateway already exists.');
+    }
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('solana_pay')->error('Failed to create Solana Pay gateway: @message', ['@message' => $e->getMessage()]);
+  }
+}
+
+/**
+ * Create Solana Pay gateway if missing.
+ */
+function solana_pay_update_9001() {
+  solana_pay_install();
+}

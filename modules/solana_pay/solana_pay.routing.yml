@@ -1,0 +1,23 @@
+solana_pay.payment:
+  path: '/solana-pay/payment/{commerce_payment}'
+  defaults:
+    _controller: '\Drupal\solana_pay\Controller\SolanaPayController::payment'
+    _title: 'Complete Payment'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      commerce_payment:
+        type: entity:commerce_payment
+
+solana_pay.status:
+  path: '/solana-pay/status/{commerce_payment}'
+  defaults:
+    _controller: '\Drupal\solana_pay\Controller\SolanaPayStatusController::check'
+    _title: 'Check Solana Pay Status'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      commerce_payment:
+        type: entity:commerce_payment

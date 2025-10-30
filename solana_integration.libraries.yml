@@ -1,0 +1,11 @@
+solana_pay_qr:
+  version: 1.x
+  js:
+    # A lightweight, standalone library to generate QR codes.
+    https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js: { type: external, minified: true }
+    # Our custom script to handle QR code rendering and payment verification polling.
+    js/solana_pay.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once

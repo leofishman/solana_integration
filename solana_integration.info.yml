@@ -1,0 +1,24 @@
+name: 'Solana Integration'
+type: module
+description: 'Provides Solana blockchain integration functionality for Drupal, including wallet connections, transaction handling, and smart contract interactions.'
+core_version_requirement: ^10 || ^11
+package: 'Blockchain'
+version: 1.0.0-dev
+
+dependencies:
+  - drupal:system (>=10.0.0)
+  - drupal:user
+  - drupal:field
+  - drupal:node
+  - drupal:key (>=1.20)
+
+configure: solana_integration.settings
+
+# Test dependencies
+test_dependencies:
+  - drupal:system
+
+# PHP requirements
+php: 8.2
+php_extensions:
+  - sodium

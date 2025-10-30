@@ -1,0 +1,10 @@
+services:
+  solana_integration.middleware:
+    class: Drupal\solana_integration\Middleware\X402Middleware
+    arguments: ['@http_kernel', '@config.factory', '@messenger']
+    tags:
+      - { name: http_middleware, priority: 200 }
+  solana_integration.client:
+    class: Drupal\solana_integration\Service\SolanaClient
+    arguments: ['@config.factory']
+    public: true

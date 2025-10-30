@@ -1,0 +1,49 @@
+Here is a detailed TODO list for the Solana Pay payment gateway as a submodule named `solana_pay` under the parent module `solana_integration`. This list covers all necessary functionalities for a Drupal Commerce payment gateway integration with Solana Pay:
+
+## TODO List for solana_pay Submodule
+
+### Module Setup
+- [X] Define `solana_pay` submodule info file (`solana_pay.info.yml`) referencing `solana_integration` as the parent module.
+- [X] Add dependency on `commerce_payment` and `solana_integration` in `solana_pay.info.yml`.
+
+### Payment Gateway Plugin
+- [X] Create payment gateway plugin class `SolanaPay` implementing `PaymentGatewayInterface`.
+- [X] Add gateway metadata (id, label, description).
+- [X] Define plugin annotation for Drupal plugin discovery.
+- [ ] Implement method to build payment request (generate Solana Pay URL with recipient, amount, SPL token, reference).
+- [ ] Implement `createPaymentMethod()` to define and manage payment methods if needed.
+- [ ] Implement payment execution logic that returns redirect or data for wallet QR.
+
+### Configuration
+- [ ] Provide admin configuration form for Solana wallet address, RPC endpoint, accepted tokens, and transaction timeout.
+- [ ] Allow configuration of callback/webhook URLs if needed.
+- [ ] Save and validate configuration data.
+
+### Payment Request Handling
+- [ ] Generate Solana Pay transaction URL during checkout.
+- [ ] Optionally generate and display QR code for user wallet scanning.
+- [ ] Integrate with Drupal Commerce checkout flow to insert payment step.
+
+### Payment Verification & Callbacks
+- [ ] Implement callback controller or route to receive Solana Pay transaction confirmation.
+- [ ] Verify payment transaction on Solana blockchain using RPC or API.
+- [ ] Confirm payment success/failure and update Commerce order payment state.
+- [ ] Handle asynchronous notifications from wallets or blockchain.
+
+### Order Management
+- [ ] Update order status and payment state on successful payment.
+- [ ] Implement failure and cancellation handling.
+- [ ] Provide hooks or events to react to payment status changes.
+
+### Logging & Error Handling
+- [ ] Log payment attempts, errors, and blockchain validation results.
+- [ ] Show error messages to users on failures during payment process.
+
+### Testing & Documentation
+- [ ] Write unit and functional tests for the payment gateway plugin.
+- [ ] Provide usage and configuration documentation.
+- [ ] Document how to set up Solana Pay alongside the `solana_integration` parent.
+
+This list covers the main functionalities and coding tasks needed to build a fully working Solana Pay gateway submodule inside the `solana_integration` module structure. Each task typically corresponds to implementing Drupal hooks, plugin classes, form classes, or route controllers within the `modules/solana_integration/solana_pay` directory.
+
+If you want, I can help generate code templates or implementation details for any of these to-dos.

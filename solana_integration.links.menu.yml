@@ -1,0 +1,13 @@
+solana_integration.balance_check:
+  title: 'Check Balance'
+  description: 'Check the SOL balance of a Solana account.'
+  menu_name: main
+  route_name: solana_integration.balance_check
+  weight: 100
+solana_integration.settings:
+  title: 'Solana Integration Settings'
+  description: 'Configure the Solana Integration module.'
+  menu_name: admin
+  route_name: solana_integration.settings
+  parent: system.admin_config_services
+  weight: 100
