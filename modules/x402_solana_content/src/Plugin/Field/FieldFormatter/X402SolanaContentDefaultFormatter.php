@@ -23,14 +23,33 @@ class X402SolanaContentDefaultFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
+    $setting = $items->getFieldDefinition()->getSetting('configuration_mode');
 
     foreach ($items as $delta => $item) {
-      $elements[$delta] = [
-        '#theme' => 'x402_solana_content_formatter',
-        '#price' => $item->price,
-        '#currency' => $item->currency,
-        '#address' => $item->address,
-      ];
+      if (!$item->enabled) {
+        continue;
+      }
+
+      if ($setting === 'global') {
+        $price = $items->getFieldDefinition()->getSetting('global_price');
+        $currency = $items->getFieldDefinition()->getSetting('global_currency');
+        $address = $items->getFieldDefinition()->getSetting('global_address');
+
+        $elements[$delta] = [
+          '#theme' => 'x402_solana_content_formatter',
+          '#price' => $price,
+          '#currency' => $currency,
+          '#address' => $address,
+        ];
+      }
+      else {
+        $elements[$delta] = [
+          '#theme' => 'x402_solana_content_formatter',
+          '#price' => $item->price,
+          '#currency' => $item->currency,
+          '#address' => $item->address,
+        ];
+      }
     }
 
     return $elements;

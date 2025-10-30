@@ -27,6 +27,12 @@ function x402_solana_content_uninstall() {
 function x402_solana_content_field_schema($field) {
   $schema = [
     'columns' => [
+      'enabled' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
       'price' => [
         'type' => 'numeric',
         'precision' => 10,
