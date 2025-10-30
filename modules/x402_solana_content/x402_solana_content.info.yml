@@ -1,8 +1,8 @@
 name: x402 Solana Content
 type: module
-description: 'Built-in x402 payment Pay-per-Read for Solana.'
+description: 'Provides a field type to handle x402 micropayments for content.'
 core_version_requirement: ^10 || ^11
 package: Blockchain
 dependencies:
+  - drupal:field
   - drupal:solana_integration
-  - drupal:node

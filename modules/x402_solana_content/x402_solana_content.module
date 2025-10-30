@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Primary module file for the x402_solana_content module.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function x402_solana_content_theme($existing, $type, $theme, $path) {
+  return [
+    'x402_solana_content_formatter' => [
+      'variables' => [
+        'price' => NULL,
+        'currency' => NULL,
+        'address' => NULL,
+      ],
+    ],
+  ];
+}

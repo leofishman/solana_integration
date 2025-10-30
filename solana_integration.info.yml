@@ -10,7 +10,7 @@ dependencies:
   - drupal:user
   - drupal:field
   - drupal:node
-  - drupal:key (>=1.20)
+  # - drupal:key (>=1.20)
 
 configure: solana_integration.settings
 
