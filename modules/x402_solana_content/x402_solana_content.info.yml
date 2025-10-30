@@ -1,0 +1,8 @@
+name: x402 Solana Content
+type: module
+description: 'Built-in x402 payment Pay-per-Read for Solana.'
+core_version_requirement: ^10 || ^11
+package: Blockchain
+dependencies:
+  - drupal:solana_integration
+  - drupal:node
