@@ -26,9 +26,10 @@ class X402SolanaContentItem extends FieldItemBase {
   public static function defaultFieldSettings() {
     return [
       'configuration_mode' => 'individual',
-      'global_price' => '',
-      'global_currency' => '',
-      'global_address' => '',
+      'price' => '',
+      'currency' => '',
+      'address' => '',
+      'enabled' => 1,
     ] + parent::defaultFieldSettings();
   }
 
@@ -46,39 +47,30 @@ class X402SolanaContentItem extends FieldItemBase {
       '#default_value' => $this->getSetting('configuration_mode'),
     ];
 
-    $element['global_price'] = [
+    $element['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enabled by default'),
+      '#default_value' => $this->getSetting('enabled'),
+    ];
+
+    $element['price'] = [
       '#type' => 'number',
-      '#title' => $this->t('Global Price'),
-      '#default_value' => $this->getSetting('global_price'),
+      '#title' => $this->t('Price'),
+      '#default_value' => $this->getSetting('price'),
       '#step' => '0.01',
       '#min' => 0,
-      '#states' => [
-        'visible' => [
-          'input[name*="[settings][configuration_mode]"][value="global"]' => ['checked' => TRUE],
-        ],
-      ],
     ];
 
-    $element['global_currency'] = [
+    $element['currency'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Global Currency'),
-      '#default_value' => $this->getSetting('global_currency'),
-      '#states' => [
-        'visible' => [
-          'input[name*="[settings][configuration_mode]"][value="global"]' => ['checked' => TRUE],
-        ],
-      ],
+      '#title' => $this->t('Currency'),
+      '#default_value' => $this->getSetting('currency'),
     ];
 
-    $element['global_address'] = [
+    $element['address'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Global Address'),
-      '#default_value' => $this->getSetting('global_address'),
-      '#states' => [
-        'visible' => [
-          'input[name*="[settings][configuration_mode]"][value="global"]' => ['checked' => TRUE],
-        ],
-      ],
+      '#title' => $this->t('Address'),
+      '#default_value' => $this->getSetting('address'),
     ];
 
     return $element;

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\node\NodeInterface;
 
 class X402Middleware implements HttpKernelInterface {
   protected $kernel;
@@ -36,14 +37,36 @@ class X402Middleware implements HttpKernelInterface {
   }
 
   protected function isProtected(Request $request) {
-    $config = $this->config->get('solana_integration.settings');
-    $enabled = $config->get('enabled_paths') ?? [];
-    $path = $request->getPathInfo();
-    foreach ($enabled as $pattern) {
-      if (fnmatch($pattern, $path)) {
-        return $config->get('default_price') ?? 0.01;
+    $node = $request->attributes->get('node');
+
+    if ($node instanceof NodeInterface) {
+      foreach ($node->getFieldDefinitions() as $field_definition) {
+        if ($field_definition->getType() === 'x402_solana_content') {
+          $field_name = $field_definition->getName();
+          if ($node->hasField($field_name)) {
+            $field = $node->get($field_name);
+            if (!$field->isEmpty() && $field->enabled) {
+              $config_mode = $field->getFieldDefinition()->getSetting('configuration_mode');
+              if ($config_mode === 'global') {
+                return [
+                  'price' => $field->getFieldDefinition()->getSetting('price'),
+                  'currency' => $field->getFieldDefinition()->getSetting('currency'),
+                  'address' => $field->getFieldDefinition()->getSetting('address'),
+                ];
+              }
+              else { // individual
+                return [
+                  'price' => $field->price,
+                  'currency' => $field->currency,
+                  'address' => $field->address,
+                ];
+              }
+            }
+          }
+        }
       }
     }
+
     return FALSE;
   }
 
@@ -66,13 +89,12 @@ class X402Middleware implements HttpKernelInterface {
     }
   }
 
-  protected function return402(Request $request, $price) {
-    $config = $this->config->get('solana_integration.settings');
+  protected function return402(Request $request, array $payment_details) {
     $intent = [
-      'amount' => $price,
-      'currency' => 'USDC',
+      'amount' => $payment_details['price'],
+      'currency' => $payment_details['currency'],
       'network' => 'solana',
-      'recipient' => $config->get('wallet_address'),
+      'recipient' => $payment_details['address'],
       'facilitator' => $this->getFacilitatorUrl(),
       'description' => 'Premium content access',
     ];
@@ -89,8 +111,3 @@ class X402Middleware implements HttpKernelInterface {
     return rtrim($config->get('facilitator_url') ?: \Drupal::request()->getSchemeAndHttpHost(), '/') . '/x402';
   }
 }
-
-
-// TODO:
-// check configuration for wallet_address, price and facilitator_url
-// Later move wallet, price and other metadata to a custom solana field

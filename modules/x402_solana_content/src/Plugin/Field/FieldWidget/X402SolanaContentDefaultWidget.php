@@ -29,18 +29,14 @@ class X402SolanaContentDefaultWidget extends WidgetBase {
     $element['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable x402 micropayment'),
-      '#default_value' => isset($items[$delta]->enabled) ? $items[$delta]->enabled : 0,
+      '#default_value' => isset($items[$delta]->enabled) ? $items[$delta]->enabled : $field_definition->getSetting('enabled'),
     ];
 
     if ($setting === 'individual') {
-      $global_price = $field_definition->getSetting('global_price');
-      $global_currency = $field_definition->getSetting('global_currency');
-      $global_address = $field_definition->getSetting('global_address');
-
       $element['price'] = [
         '#type' => 'number',
         '#title' => $this->t('Price'),
-        '#default_value' => isset($items[$delta]->price) ? $items[$delta]->price : $global_price,
+        '#default_value' => isset($items[$delta]->price) ? $items[$delta]->price : $field_definition->getSetting('price'),
         '#step' => '0.01',
         '#min' => 0,
         '#states' => [
@@ -52,7 +48,7 @@ class X402SolanaContentDefaultWidget extends WidgetBase {
       $element['currency'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Currency'),
-        '#default_value' => isset($items[$delta]->currency) ? $items[$delta]->currency : $global_currency,
+        '#default_value' => isset($items[$delta]->currency) ? $items[$delta]->currency : $field_definition->getSetting('currency'),
         '#size' => 60,
         '#maxlength' => 255,
         '#states' => [
@@ -64,7 +60,7 @@ class X402SolanaContentDefaultWidget extends WidgetBase {
       $element['address'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Address'),
-        '#default_value' => isset($items[$delta]->address) ? $items[$delta]->address : $global_address,
+        '#default_value' => isset($items[$delta]->address) ? $items[$delta]->address : $field_definition->getSetting('address'),
         '#size' => 60,
         '#maxlength' => 255,
         '#states' => [
