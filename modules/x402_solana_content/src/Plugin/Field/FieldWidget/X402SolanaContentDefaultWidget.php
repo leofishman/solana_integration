@@ -33,10 +33,10 @@ class X402SolanaContentDefaultWidget extends WidgetBase {
     ];
 
     if ($setting === 'individual') {
-      $element['price'] = [
+      $element['amount'] = [
         '#type' => 'number',
-        '#title' => $this->t('Price'),
-        '#default_value' => isset($items[$delta]->price) ? $items[$delta]->price : $field_definition->getSetting('price'),
+        '#title' => $this->t('amount'),
+        '#default_value' => isset($items[$delta]->amount) ? $items[$delta]->amount : $field_definition->getSetting('amount'),
         '#step' => '0.01',
         '#min' => 0,
         '#states' => [

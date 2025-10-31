@@ -26,7 +26,7 @@ class X402SolanaContentItem extends FieldItemBase {
   public static function defaultFieldSettings() {
     return [
       'configuration_mode' => 'individual',
-      'price' => '',
+      'amount' => '',
       'currency' => '',
       'address' => '',
       'enabled' => 1,
@@ -41,8 +41,8 @@ class X402SolanaContentItem extends FieldItemBase {
       '#type' => 'radios',
       '#title' => $this->t('Configuration Mode'),
       '#options' => [
-        'global' => $this->t('Global - Use the same wallet, price and currency for all content using this field.'),
-        'individual' => $this->t('Individual - Configure wallet, price and currency for each content item.'),
+        'global' => $this->t('Global - Use the same wallet, amount and currency for all content using this field.'),
+        'individual' => $this->t('Individual - Configure wallet, amount and currency for each content item.'),
       ],
       '#default_value' => $this->getSetting('configuration_mode'),
     ];
@@ -53,10 +53,10 @@ class X402SolanaContentItem extends FieldItemBase {
       '#default_value' => $this->getSetting('enabled'),
     ];
 
-    $element['price'] = [
+    $element['amount'] = [
       '#type' => 'number',
-      '#title' => $this->t('Price'),
-      '#default_value' => $this->getSetting('price'),
+      '#title' => $this->t('Amount'),
+      '#default_value' => $this->getSetting('amount'),
       '#step' => '0.01',
       '#min' => 0,
     ];
@@ -88,7 +88,7 @@ class X402SolanaContentItem extends FieldItemBase {
           'not null' => TRUE,
           'default' => 0,
         ],
-        'price' => [
+        'amount' => [
           'type' => 'numeric',
           'precision' => 10,
           'scale' => 2,
@@ -114,8 +114,8 @@ class X402SolanaContentItem extends FieldItemBase {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['enabled'] = DataDefinition::create('boolean')
       ->setLabel(t('Enabled'));
-    $properties['price'] = DataDefinition::create('float')
-      ->setLabel(t('Price'));
+    $properties['amount'] = DataDefinition::create('float')
+      ->setLabel(t('Amount'));
     $properties['currency'] = DataDefinition::create('string')
       ->setLabel(t('Currency'));
     $properties['address'] = DataDefinition::create('string')
@@ -131,10 +131,10 @@ class X402SolanaContentItem extends FieldItemBase {
     if ($this->get('enabled')->getValue()) {
       return FALSE;
     }
-    $price = $this->get('price')->getValue();
+    $amount = $this->get('amount')->getValue();
     $currency = $this->get('currency')->getValue();
     $address = $this->get('address')->getValue();
-    return empty($price) && empty($currency) && empty($address);
+    return empty($amount) && empty($currency) && empty($address);
   }
 
 }

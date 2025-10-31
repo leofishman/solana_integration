@@ -31,13 +31,13 @@ class X402SolanaContentDefaultFormatter extends FormatterBase {
       }
 
       if ($setting === 'global') {
-        $price = $items->getFieldDefinition()->getSetting('global_price');
+        $amount = $items->getFieldDefinition()->getSetting('global_amount');
         $currency = $items->getFieldDefinition()->getSetting('global_currency');
         $address = $items->getFieldDefinition()->getSetting('global_address');
 
         $elements[$delta] = [
           '#theme' => 'x402_solana_content_formatter',
-          '#price' => $price,
+          '#amount' => $amount,
           '#currency' => $currency,
           '#address' => $address,
         ];
@@ -45,7 +45,7 @@ class X402SolanaContentDefaultFormatter extends FormatterBase {
       else {
         $elements[$delta] = [
           '#theme' => 'x402_solana_content_formatter',
-          '#price' => $item->price,
+          '#amount' => $item->amount,
           '#currency' => $item->currency,
           '#address' => $item->address,
         ];

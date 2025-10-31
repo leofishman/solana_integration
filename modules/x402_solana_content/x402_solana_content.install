@@ -33,7 +33,7 @@ function x402_solana_content_field_schema($field) {
         'not null' => TRUE,
         'default' => 0,
       ],
-      'price' => [
+      'amount' => [
         'type' => 'numeric',
         'precision' => 10,
         'scale' => 2,

@@ -14,7 +14,7 @@ function x402_solana_content_theme($existing, $type, $theme, $path) {
   return [
     'x402_solana_content_formatter' => [
       'variables' => [
-        'price' => NULL,
+        'amount' => NULL,
         'currency' => NULL,
         'address' => NULL,
       ],

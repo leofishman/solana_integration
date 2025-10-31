@@ -146,14 +146,14 @@ class NodeAccessSubscriber implements EventSubscriberInterface {
               $config_mode = $field->getFieldDefinition()->getSetting('configuration_mode');
               if ($config_mode === 'global') {
                 $solana_fields[] = [
-                  'price' => $field->getFieldDefinition()->getSetting('price'),
+                  'amount' => $field->getFieldDefinition()->getSetting('amount'),
                   'currency' => $field->getFieldDefinition()->getSetting('currency'),
                   'address' => $field->getFieldDefinition()->getSetting('address'),
                 ];
               }
               else { // individual
                 $solana_fields[] = [
-                  'price' => $field->price,
+                  'amount' => $field->amount,
                   'currency' => $field->currency,
                   'address' => $field->address,
                 ];
