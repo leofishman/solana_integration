@@ -1,9 +1,9 @@
 services:
-  solana_integration.middleware:
-    class: Drupal\solana_integration\Middleware\X402Middleware
-    decorates: http_kernel
-    decoration_priority: 5
-    arguments: ['@solana_integration.middleware.inner', '@config.factory', '@messenger']
+  solana_integration.subscriber:
+    class: Drupal\solana_integration\EventSubscriber\X402Subscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }
   solana_integration.client:
     class: Drupal\solana_integration\Service\SolanaClient
     arguments: ['@config.factory']

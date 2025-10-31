@@ -19,5 +19,14 @@ function x402_solana_content_theme($existing, $type, $theme, $path) {
         'address' => NULL,
       ],
     ],
+    'x402_solana_payment_required' => [
+      'variables' => [
+        'title' => '',
+        'amount' => 0,
+        'currency' => 'SOL',
+        'wallet' => '',
+        'node_id' => NULL,
+      ],
+    ],
   ];
 }

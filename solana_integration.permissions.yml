@@ -1,0 +1,4 @@
+bypass x402 solana payment:
+  title: 'Bypass Solana payment requirements'
+  description: t('Allow access to Solana-protected content without payment.')
+  restrict access: true

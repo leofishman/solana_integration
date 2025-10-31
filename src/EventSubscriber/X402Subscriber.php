@@ -1,43 +1,54 @@
 <?php
 
-namespace Drupal\solana_integration\Middleware;
+namespace Drupal\solana_integration\EventSubscriber;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\node\NodeInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
-class X402Middleware implements HttpKernelInterface {
-  protected $kernel;
+class X402Subscriber implements EventSubscriberInterface {
+
   protected $config;
-  protected $messenger;
 
-  public function __construct(HttpKernelInterface $kernel, ConfigFactoryInterface $config, MessengerInterface $messenger) {
-    $this->kernel = $kernel;
+  public function __construct(ConfigFactoryInterface $config) {
     $this->config = $config;
-    $this->messenger = $messenger;
   }
 
-  public function handle(Request $request, $type = self::MAIN_REQUEST, $catch = TRUE): Response {
+  public static function getSubscribedEvents() {
+    $events[KernelEvents::REQUEST][] = ['onKernelRequest', 28];
+    return $events;
+  }
+
+  public function onKernelRequest(RequestEvent $event) {
+    if (!$event->isMainRequest()) {
+      return;
+    }
+
+    $request = $event->getRequest();
     $path = $request->getPathInfo();
 
     // Skip admin, assets, etc.
     if (strpos($path, '/admin') === 0 || strpos($path, '/x402/verify') === 0) {
-      return $this->kernel->handle($request, $type, $catch);
+      return;
     }
 
     $protected = $this->isProtected($request);
     if ($protected && !$this->hasValidPayment($request)) {
-      return $this->return402($request, $protected);
+      $response = $this->return402($request, $protected);
+      $event->setResponse($response);
     }
-
-    return $this->kernel->handle($request, $type, $catch);
   }
 
   protected function isProtected(Request $request) {
-    $node = $request->attributes->get('node');
+    $route_match = $request->attributes->get('_route_match');
+    if (!$route_match) {
+      return FALSE;
+    }
+    $node = $route_match->getParameter('node');
 
     if ($node instanceof NodeInterface) {
       foreach ($node->getFieldDefinitions() as $field_definition) {
