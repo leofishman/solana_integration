@@ -1,0 +1,11 @@
+x402_solana_content.payment_required:
+  path: '/x402-solana/payment-required/{node}'
+  defaults:
+    _title: 'Payment Required'
+    _controller: '\Drupal\x402_solana_content\Controller\PaymentRequiredController::paymentRequired'
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node

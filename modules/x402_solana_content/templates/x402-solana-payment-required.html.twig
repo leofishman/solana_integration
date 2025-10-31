@@ -1,79 +1,55 @@
 {# templates/x402-solana-payment-required.html.twig #}
-<div class="solana-payment-required">
+{{ attach_library('x402_solana_content/wallet_integration') }}
+
+<div class="solana-payment-required" data-node-id="{{ node_id }}">
   <div class="payment-header">
     <h1>Payment Required</h1>
     <p>Access to "{{ title }}" requires payment.</p>
   </div>
   
-  <div class="payment-details">
-    <h2>Payment Details</h2>
-    <div class="amount">
-      <strong>Amount:</strong> {{ amount }} {{ currency }}
+  <div class="payment-options">
+    <h2>Available Payment Options</h2>
+    {% for field in solana_fields %}
+    <div class="payment-option" data-field="{{ field.field_name }}" data-delta="{{ field.delta }}">
+      <h3>{{ field.label }}</h3>
+      <div class="payment-details">
+        <div class="amount">
+          <strong>Amount:</strong> {{ field.amount }} {{ field.currency }}
+        </div>
+        {% if field.address %}
+        <div class="wallet">
+          <strong>Wallet Address:</strong> 
+          <code class="wallet-address">{{ field.address }}</code>
+          <button class="copy-address" data-address="{{ field.address }}">Copy</button>
+        </div>
+        {% endif %}
+      </div>
     </div>
-    {% if wallet %}
-    <div class="wallet">
-      <strong>Wallet Address:</strong> <code>{{ wallet }}</code>
+    {% endfor %}
+  </div>
+  
+  <div class="wallet-connection">
+    <h3>Connect Your Wallet</h3>
+    <div class="wallet-buttons">
+      <button id="connect-phantom" class="wallet-button phantom">Phantom</button>
+      <button id="connect-solflare" class="wallet-button solflare">Solflare</button>
+      <button id="connect-backpack" class="wallet-button backpack">Backpack</button>
     </div>
-    {% endif %}
+    <div id="wallet-status" class="wallet-status"></div>
   </div>
   
   <div class="payment-actions">
-    <h3>How to Pay</h3>
-    <div class="solana-payment-interface">
-      {# This is where you'd integrate with Solana wallet connection #}
-      <button class="connect-wallet">Connect Solana Wallet</button>
-      <button class="make-payment" disabled>Make Payment</button>
-    </div>
-    
-    <div class="alternative-actions">
-      <a href="{{ url('<front>') }}">Return to homepage</a>
+    <button id="make-payment" class="make-payment" disabled>Make Payment</button>
+    <div id="payment-verification" class="payment-verification" style="display: none;">
+      <h4>Verifying Payment...</h4>
+      <div class="verification-progress">
+        <div class="progress-bar"></div>
+      </div>
+      <p>Please wait while we verify your transaction on the Solana blockchain.</p>
     </div>
   </div>
   
-  <div class="payment-verification" style="display: none;">
-    <h3>Verifying Payment...</h3>
-    <p>Please wait while we verify your transaction on the Solana blockchain.</p>
+  <div class="alternative-actions">
+    <a href="{{ url('<front>') }}">Return to homepage</a>
   </div>
 </div>
-
-<style>
-.solana-payment-required {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-.payment-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-.payment-details {
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: 4px;
-  margin-bottom: 2rem;
-}
-.payment-actions {
-  margin-bottom: 2rem;
-}
-.connect-wallet, .make-payment {
-  padding: 0.75rem 1.5rem;
-  margin: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.connect-wallet {
-  background: #14f195;
-  color: #000;
-}
-.make-payment:not(:disabled) {
-  background: #9945ff;
-  color: #fff;
-}
-.make-payment:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-</style>

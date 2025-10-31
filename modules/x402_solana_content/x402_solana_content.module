@@ -27,6 +27,9 @@ function x402_solana_content_theme($existing, $type, $theme, $path) {
         'wallet' => '',
         'node_id' => NULL,
       ],
+      'library' => [
+        'x402_solana_content/wallet_integration',
+      ],
     ],
   ];
 }

@@ -1,0 +1,11 @@
+wallet_integration:
+  version: 1.x
+  css:
+    theme:
+      css/wallet_integration.css: {}
+  js:
+    js/wallet_integration.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
