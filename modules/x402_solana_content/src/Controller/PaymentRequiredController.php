@@ -1,6 +1,5 @@
 <?php
 
-// src/Controller/PaymentRequiredController.php
 namespace Drupal\x402_solana_content\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -9,11 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Cache\CacheableResponse;
 
 class PaymentRequiredController extends ControllerBase {
-  
-
 
   public function paymentRequired(Node $node) {
-    // Get the Solana fields from the node
+    // Get the Solana fields from the node using the subscriber service
     $subscriber = \Drupal::service('x402_solana_content.node_access_subscriber');
     $solanaFields = $subscriber->getSolanaFields($node);
     
@@ -37,17 +34,15 @@ class PaymentRequiredController extends ControllerBase {
           ],
         ],
       ],
+      '#cache' => [
+        'contexts' => ['user.permissions', 'session'],
+        'tags' => ['node:' . $node->id(), 'x402_solana_content'],
+        'max-age' => 0, // No caching for payment pages
+      ],
     ];
 
-    // Create a cacheable response with 402 status
-    $content = \Drupal::service('renderer')->renderRoot($build);
-    $response = new CacheableResponse($content, 402);
-    $response->headers->set('Content-Type', 'text/html; charset=utf-8');
-    
-    // Add cache dependencies
-    $response->addCacheableDependency($node);
-    $response->addCacheableDependency($config);
-    
-    return $response;
+    // Return the render array - Drupal will handle the 200 response
+    // The 402 status is handled by the redirect from the event subscriber
+    return $build;
   }
 }

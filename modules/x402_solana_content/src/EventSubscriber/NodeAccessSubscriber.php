@@ -62,39 +62,39 @@ class NodeAccessSubscriber implements EventSubscriberInterface {
   /**
    * Check if the current request is for a Solana-protected node.
    */
-public function checkNodeAccess(RequestEvent $event) {
-  $request = $event->getRequest();
+// public function checkNodeAccess(RequestEvent $event) {
+//   $request = $event->getRequest();
   
-  // Skip if this is already the payment required route to avoid infinite redirect
-  if ($request->attributes->get('_route') === 'x402_solana_content.payment_required') {
-    return;
-  }
+//   // Skip if this is already the payment required route to avoid infinite redirect
+//   if ($request->attributes->get('_route') === 'x402_solana_content.payment_required') {
+//     return;
+//   }
   
-  // Only process if this is a node page
-  if (!$request->attributes->has('node')) {
-    return;
-  }
+//   // Only process if this is a node page
+//   if (!$request->attributes->has('node')) {
+//     return;
+//   }
 
-  $node = $request->attributes->get('node');
+//   $node = $request->attributes->get('node');
   
-  // Ensure we have a node entity
-  if (!$node instanceof Node) {
-    return;
-  }
+//   // Ensure we have a node entity
+//   if (!$node instanceof Node) {
+//     return;
+//   }
 
-  // Skip if user has bypass permission
-  if ($this->currentUser->hasPermission('bypass x402 solana payment')) {
-    return;
-  }
+//   // Skip if user has bypass permission
+//   if ($this->currentUser->hasPermission('bypass x402 solana payment')) {
+//     return;
+//   }
 
-  // Get all Solana fields and check if any are enabled
-  $solanaFields = $this->getSolanaFields($node);
+//   // Get all Solana fields and check if any are enabled
+//   $solanaFields = $this->getSolanaFields($node);
   
-  if (!empty($solanaFields) && !$this->hasPaidForContent($node, $solanaFields)) {
-    $response = $this->buildPaymentRequiredResponse($node, $solanaFields);
-    $event->setResponse($response);
-  }
-}
+//   if (!empty($solanaFields) && !$this->hasPaidForContent($node, $solanaFields)) {
+//     $response = $this->buildPaymentRequiredResponse($node, $solanaFields);
+//     $event->setResponse($response);
+//   }
+// }
 
   /**
    * Check if node has Solana payment protection enabled.
@@ -176,19 +176,50 @@ public function checkNodeAccess(RequestEvent $event) {
     
 //     return $response;
 //   }
-    protected function buildPaymentRequiredResponse(Node $node, array $solanaFields) {
-    // Generate URL to the payment required page
-    $url = \Drupal\Core\Url::fromRoute('x402_solana_content.payment_required', ['node' => $node->id()]);
-    
-    // Create a redirect response that maintains the 402 concept
-    // We'll use a special header to indicate this is a payment redirect
-    $response = new \Symfony\Component\HttpFoundation\RedirectResponse($url->toString());
-    
-    // Add custom header to indicate payment requirement (optional)
-    $response->headers->set('X-Payment-Required', 'true');
-    
-    return $response;
-    }
+public function checkNodeAccess(RequestEvent $event) {
+  $request = $event->getRequest();
+  
+  // Skip if this is already the payment required route to avoid infinite redirect
+  $route_name = $request->attributes->get('_route');
+  if ($route_name === 'x402_solana_content.payment_required') {
+    return;
+  }
+  
+  // Only process if this is a node page
+  if (!$request->attributes->has('node')) {
+    return;
+  }
+
+  $node = $request->attributes->get('node');
+  
+  // Ensure we have a node entity
+  if (!$node instanceof Node) {
+    return;
+  }
+
+  // Skip if user has bypass permission
+  if ($this->currentUser->hasPermission('bypass x402 solana payment')) {
+    return;
+  }
+
+  // Get all Solana fields and check if any are enabled
+  $solanaFields = $this->getSolanaFields($node);
+  
+  if (!empty($solanaFields) && !$this->hasPaidForContent($node, $solanaFields)) {
+    $response = $this->buildPaymentRequiredResponse($node, $solanaFields);
+    $event->setResponse($response);
+  }
+}
+
+protected function buildPaymentRequiredResponse(Node $node, array $solanaFields) {
+  // Generate URL to the payment required page
+  $url = \Drupal\Core\Url::fromRoute('x402_solana_content.payment_required', ['node' => $node->id()]);
+  
+  // Create a redirect response
+  $response = new \Symfony\Component\HttpFoundation\RedirectResponse($url->toString());
+  
+  return $response;
+}
 
   /**
    * Get all Solana fields from the node.
