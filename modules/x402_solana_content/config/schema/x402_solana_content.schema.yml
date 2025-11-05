@@ -1,0 +1,19 @@
+node.type.*.third_party.x402_solana_content:
+  type: mapping
+  label: 'x402 Solana Content settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enable payments'
+    configuration_mode:
+      type: string
+      label: 'Configuration mode'
+    amount:
+      type: string
+      label: 'Amount'
+    currency:
+      type: string
+      label: 'Currency'
+    address:
+      type: string
+      label: 'Address'

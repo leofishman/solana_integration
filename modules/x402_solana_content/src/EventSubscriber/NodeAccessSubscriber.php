@@ -222,56 +222,39 @@ protected function buildPaymentRequiredResponse(Node $node, array $solanaFields)
 }
 
   /**
-   * Get all Solana fields from the node.
+   * Get all Solana fields from the node based on config.
    */
   public function getSolanaFields(Node $node) {
-    $solana_fields = [];
-    
-    foreach ($node->getFieldDefinitions() as $field_definition) {
-      if ($field_definition->getType() === 'x402_solana_content') {
-        $field_name = $field_definition->getName();
-        
-        if ($node->hasField($field_name)) {
-          $field = $node->get($field_name);
-          
-          if (!$field->isEmpty()) {
-            $field_values = $field->getValue();
-            
-            foreach ($field_values as $delta => $values) {
-              // Check if this field instance is enabled
-              if (!empty($values['enabled'])) {
-                $config_mode = $field->getFieldDefinition()->getSetting('configuration_mode') ?? 'individual';
-                
-                if ($config_mode === 'global') {
-                  $solana_fields[] = [
-                    'field_name' => $field_name,
-                    'delta' => $delta,
-                    'amount' => $field->getFieldDefinition()->getSetting('amount'),
-                    'currency' => $field->getFieldDefinition()->getSetting('currency'),
-                    'address' => $field->getFieldDefinition()->getSetting('address'),
-                    'configuration_mode' => 'global',
-                    'label' => $field->getFieldDefinition()->getLabel(),
-                  ];
-                }
-                else { // individual
-                  $solana_fields[] = [
-                    'field_name' => $field_name,
-                    'delta' => $delta,
-                    'amount' => $values['amount'] ?? 0,
-                    'currency' => $values['currency'] ?? 'SOL',
-                    'address' => $values['address'] ?? '',
-                    'configuration_mode' => 'individual',
-                    'label' => $field->getFieldDefinition()->getLabel(),
-                  ];
-                }
-              }
-            }
-          }
-        }
+    $bundle = $node->bundle();
+    $config = \Drupal::config("node.type.{$bundle}.third_party.x402_solana_content");
+
+    if (!$config->get('enabled')) {
+      return [];
+    }
+
+    $mode = $config->get('configuration_mode');
+    $fields = [];
+
+    if ($mode === 'global') {
+      $fields[] = [
+        'amount' => $config->get('amount'),
+        'currency' => $config->get('currency'),
+        'address' => $config->get('address'),
+        'configuration_mode' => 'global',
+      ];
+    } elseif ($mode === 'individual') {
+      $third_party_settings = $node->getThirdPartySetting('x402_solana_content', 'payment_settings') ?: [];
+      if (!empty($third_party_settings['enabled'])) {
+        $fields[] = [
+          'amount' => $third_party_settings['amount'] ?: $config->get('amount'),
+          'currency' => $third_party_settings['currency'] ?: $config->get('currency'),
+          'address' => $third_party_settings['address'] ?: $config->get('address'),
+          'configuration_mode' => 'individual',
+        ];
       }
     }
 
-    return $solana_fields;
+    return $fields;
   }
 
   /**

@@ -21,36 +21,4 @@ function x402_solana_content_uninstall() {
   \Drupal::messenger()->addStatus(__FUNCTION__);
 }
 
-/**
- * Implements hook_field_schema().
- */
-function x402_solana_content_field_schema($field) {
-  $schema = [
-    'columns' => [
-      'enabled' => [
-        'type' => 'int',
-        'size' => 'tiny',
-        'not null' => TRUE,
-        'default' => 0,
-      ],
-      'amount' => [
-        'type' => 'numeric',
-        'precision' => 10,
-        'scale' => 2,
-        'not null' => FALSE,
-      ],
-      'currency' => [
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => FALSE,
-      ],
-      'address' => [
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => FALSE,
-      ],
-    ],
-  ];
 
-  return $schema;
-}

@@ -8,24 +8,23 @@
   </div>
   
   <div class="payment-options">
-    <h2>Available Payment Options</h2>
-    {% for field in solana_fields %}
-    <div class="payment-option" data-field="{{ field.field_name }}" data-delta="{{ field.delta }}">
-      <h3>{{ field.label }}</h3>
-      <div class="payment-details">
-        <div class="amount">
-          <strong>Amount:</strong> {{ field.amount }} {{ field.currency }}
-        </div>
-        {% if field.address %}
-        <div class="wallet">
-          <strong>Wallet Address:</strong> 
-          <code class="wallet-address">{{ field.address }}</code>
-          <button class="copy-address" data-address="{{ field.address }}">Copy</button>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-    {% endfor %}
+  <h2>Payment Required</h2>
+  {% for field in solana_fields %}
+  <div class="payment-option">
+  <div class="payment-details">
+    <div class="amount">
+    <strong>Amount:</strong> {{ field.amount }} {{ field.currency }}
+  </div>
+  {% if field.address %}
+  <div class="wallet">
+    <strong>Wallet Address:</strong>
+  <code class="wallet-address">{{ field.address }}</code>
+  <button class="copy-address" data-address="{{ field.address }}">Copy</button>
+  </div>
+  {% endif %}
+  </div>
+  </div>
+  {% endfor %}
   </div>
   
   <div class="wallet-connection">

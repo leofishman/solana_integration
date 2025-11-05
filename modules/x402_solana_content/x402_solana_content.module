@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -22,9 +23,7 @@ function x402_solana_content_theme($existing, $type, $theme, $path) {
     'x402_solana_payment_required' => [
       'variables' => [
         'title' => '',
-        'amount' => 0,
-        'currency' => 'SOL',
-        'wallet' => '',
+        'solana_fields' => [],
         'node_id' => NULL,
       ],
       'library' => [
@@ -32,4 +31,164 @@ function x402_solana_content_theme($existing, $type, $theme, $path) {
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_form_node_type_form_alter().
+ */
+function x402_solana_content_form_node_type_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $node_type = $form_state->getFormObject()->getEntity();
+  $config = \Drupal::config("node.type.{$node_type->id()}.third_party.x402_solana_content");
+
+  $form['x402_solana_settings'] = [
+    '#type' => 'details',
+    '#title' => t('x402 Solana Payment Settings'),
+    '#open' => TRUE,
+    '#tree' => TRUE,
+  ];
+
+  $form['x402_solana_settings']['enabled'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Enable Solana payments for this content type'),
+    '#default_value' => $config->get('enabled') ?: FALSE,
+  ];
+
+  $form['x402_solana_settings']['configuration_mode'] = [
+    '#type' => 'radios',
+    '#title' => t('Configuration Mode'),
+    '#options' => [
+      'global' => t('Global - Use the same settings for all nodes'),
+      'individual' => t('Individual - Allow per-node settings'),
+    ],
+    '#default_value' => $config->get('configuration_mode') ?: 'global',
+    '#states' => [
+      'visible' => [
+        ':input[name="x402_solana_settings[enabled]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $form['x402_solana_settings']['amount'] = [
+    '#type' => 'number',
+    '#title' => t('Amount'),
+    '#default_value' => $config->get('amount') ?: '',
+    '#step' => 0.01,
+    '#min' => 0,
+    '#states' => [
+      'visible' => [
+        ':input[name="x402_solana_settings[enabled]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $form['x402_solana_settings']['currency'] = [
+    '#type' => 'textfield',
+    '#title' => t('Currency'),
+    '#default_value' => $config->get('currency') ?: 'SOL',
+    '#states' => [
+      'visible' => [
+        ':input[name="x402_solana_settings[enabled]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $form['x402_solana_settings']['address'] = [
+    '#type' => 'textfield',
+    '#title' => t('Solana Address'),
+    '#default_value' => $config->get('address') ?: '',
+    '#states' => [
+      'visible' => [
+        ':input[name="x402_solana_settings[enabled]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  // Save config on submit
+  $form['#submit'][] = 'x402_solana_content_node_type_form_submit';
+}
+
+/**
+ * Submit handler for node type form.
+ */
+function x402_solana_content_node_type_form_submit($form, FormStateInterface $form_state) {
+  $node_type = $form_state->getFormObject()->getEntity();
+  $values = $form_state->getValue('x402_solana_settings');
+  $config = \Drupal::service('config.factory')->getEditable("node.type.{$node_type->id()}.third_party.x402_solana_content");
+  $config->setData($values)->save();
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function x402_solana_content_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (strpos($form_id, 'node_') === 0 && substr($form_id, -5) === '_form') {
+    $node = $form_state->getFormObject()->getEntity();
+    $bundle = $node->bundle();
+    $config = \Drupal::config("node.type.{$bundle}.third_party.x402_solana_content");
+
+    if ($config->get('enabled') && $config->get('configuration_mode') === 'individual') {
+      $form['x402_solana_node_settings'] = [
+        '#type' => 'details',
+        '#title' => t('Solana Payment Settings'),
+        '#open' => FALSE,
+        '#tree' => TRUE,
+        '#group' => 'advanced', // Optional: group with advanced settings
+      ];
+
+      $third_party_settings = $node->getThirdPartySetting('x402_solana_content', 'payment_settings') ?: [];
+
+      $form['x402_solana_node_settings']['enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Require payment for this node'),
+        '#default_value' => $third_party_settings['enabled'] ?? FALSE,
+      ];
+
+      $form['x402_solana_node_settings']['amount'] = [
+        '#type' => 'number',
+        '#title' => t('Amount'),
+        '#default_value' => $third_party_settings['amount'] ?? $config->get('amount'),
+        '#step' => 0.01,
+        '#min' => 0,
+        '#states' => [
+          'visible' => [
+            ':input[name="x402_solana_node_settings[enabled]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+
+      $form['x402_solana_node_settings']['currency'] = [
+        '#type' => 'textfield',
+        '#title' => t('Currency'),
+        '#default_value' => $third_party_settings['currency'] ?? $config->get('currency'),
+        '#states' => [
+          'visible' => [
+            ':input[name="x402_solana_node_settings[enabled]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+
+      $form['x402_solana_node_settings']['address'] = [
+        '#type' => 'textfield',
+        '#title' => t('Solana Address'),
+        '#default_value' => $third_party_settings['address'] ?? $config->get('address'),
+        '#states' => [
+          'visible' => [
+            ':input[name="x402_solana_node_settings[enabled]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+
+      // Save to third-party settings
+      $form['#submit'][] = 'x402_solana_content_node_form_submit';
+    }
+  }
+}
+
+/**
+ * Submit handler for node form.
+ */
+function x402_solana_content_node_form_submit($form, FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  $values = $form_state->getValue('x402_solana_node_settings');
+  $node->setThirdPartySetting('x402_solana_content', 'payment_settings', $values);
 }
