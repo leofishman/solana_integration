@@ -5,20 +5,111 @@
  * Install, update and uninstall functions for the x402_solana_content module.
  */
 
-use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
  * Implements hook_install().
  */
 function x402_solana_content_install() {
-  \Drupal::messenger()->addStatus(__FUNCTION__);
+  // Create the field storage for payment configuration type
+  $field_storage = FieldStorageConfig::create([
+    'field_name' => 'field_x402_payment_config_type',
+    'entity_type' => 'node',
+    'type' => 'list_string',
+    'settings' => [
+      'allowed_values' => [
+        'global' => 'Use global configuration',
+        'individual' => 'Individual configuration',
+      ],
+    ],
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  // Create the field storage for payment amount
+  $field_storage = FieldStorageConfig::create([
+    'field_name' => 'field_x402_payment_amount',
+    'entity_type' => 'node',
+    'type' => 'decimal',
+    'settings' => [
+      'precision' => 10,
+      'scale' => 6, // Increased precision for crypto amounts
+    ],
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  // Create the field storage for payment currency
+  $field_storage = FieldStorageConfig::create([
+    'field_name' => 'field_x402_payment_currency',
+    'entity_type' => 'node',
+    'type' => 'list_string',
+    'settings' => [
+      'allowed_values' => x402_solana_content_get_currency_options(),
+    ],
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  // Create the field storage for wallet address
+  $field_storage = FieldStorageConfig::create([
+    'field_name' => 'field_x402_wallet_address',
+    'entity_type' => 'node',
+    'type' => 'string',
+    'settings' => [
+      'max_length' => 255,
+    ],
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  // Create the field storage for payment enabled
+  $field_storage = FieldStorageConfig::create([
+    'field_name' => 'field_x402_payment_enabled',
+    'entity_type' => 'node',
+    'type' => 'boolean',
+    'settings' => [
+      'on_label' => 'Enabled',
+      'off_label' => 'Disabled',
+    ],
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+}
+
+/**
+ * Get available currency options for field storage.
+ */
+function x402_solana_content_get_currency_options() {
+  return [
+    'SOL' => 'SOL (Solana)',
+    'USDC' => 'USDC (USD Coin)',
+    'USDT' => 'USDT (Tether)',
+    'BONK' => 'BONK',
+    'JUP' => 'JUP (Jupiter)',
+    'PYTH' => 'PYTH',
+  ];
 }
 
 /**
  * Implements hook_uninstall().
  */
 function x402_solana_content_uninstall() {
-  \Drupal::messenger()->addStatus(__FUNCTION__);
+  // Clean up fields when module is uninstalled
+  $fields = [
+    'field_x402_payment_enabled',
+    'field_x402_payment_config_type',
+    'field_x402_payment_amount',
+    'field_x402_payment_currency',
+    'field_x402_wallet_address',
+  ];
+
+  foreach ($fields as $field_name) {
+    $field_storage = FieldStorageConfig::loadByName('node', $field_name);
+    if ($field_storage) {
+      $field_storage->delete();
+    }
+  }
 }
-
-

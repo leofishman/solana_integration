@@ -4,5 +4,5 @@ description: 'Provides a field type to handle x402 micropayments for content.'
 core_version_requirement: ^10 || ^11
 package: Blockchain
 dependencies:
-  - drupal:field
+  - drupal:node
   - drupal:solana_integration

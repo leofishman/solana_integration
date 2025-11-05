@@ -226,29 +226,30 @@ protected function buildPaymentRequiredResponse(Node $node, array $solanaFields)
    */
   public function getSolanaFields(Node $node) {
     $bundle = $node->bundle();
-    $config = \Drupal::config("node.type.{$bundle}.third_party.x402_solana_content");
+    $node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load($bundle);
+    $settings = $node_type->getThirdPartySetting('x402_solana_content', 'settings') ?: [];
 
-    if (!$config->get('enabled')) {
+    if (empty($settings['enabled'])) {
       return [];
     }
 
-    $mode = $config->get('configuration_mode');
+    $mode = $settings['configuration_mode'] ?? 'global';
     $fields = [];
 
     if ($mode === 'global') {
       $fields[] = [
-        'amount' => $config->get('amount'),
-        'currency' => $config->get('currency'),
-        'address' => $config->get('address'),
+        'amount' => $settings['amount'] ?? '',
+        'currency' => $settings['currency'] ?? 'SOL',
+        'address' => $settings['address'] ?? '',
         'configuration_mode' => 'global',
       ];
     } elseif ($mode === 'individual') {
       $third_party_settings = $node->getThirdPartySetting('x402_solana_content', 'payment_settings') ?: [];
       if (!empty($third_party_settings['enabled'])) {
         $fields[] = [
-          'amount' => $third_party_settings['amount'] ?: $config->get('amount'),
-          'currency' => $third_party_settings['currency'] ?: $config->get('currency'),
-          'address' => $third_party_settings['address'] ?: $config->get('address'),
+          'amount' => $third_party_settings['amount'] ?: ($settings['amount'] ?? ''),
+          'currency' => $third_party_settings['currency'] ?: ($settings['currency'] ?? 'SOL'),
+          'address' => $third_party_settings['address'] ?: ($settings['address'] ?? ''),
           'configuration_mode' => 'individual',
         ];
       }
